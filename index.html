@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agri Trade Pro - Farm Machinery & Packaging Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    /* Custom styles */
+    .product-card { 
+      transition: all 0.3s ease; 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .product-card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .cart-item { animation: slideIn 0.3s ease; }
+    @keyframes slideIn { 
+      from { opacity: 0; transform: translateX(20px); } 
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .floating-button { 
+      position: fixed; bottom: 20px; right: 20px; 
+      width: 60px; height: 60px; border-radius: 50%; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex; align-items: center; justify-content: center; 
+      cursor: pointer; transition: all 0.3s ease; z-index: 50;
+    }
+    .floating-button:hover { transform: scale(1.1); }
+    .floating-button .cart-count { 
+      position: absolute; top: -8px; right: -8px; 
+      background-color: #16a34a; color: white; 
+      font-size: 0.75rem; width: 20px; height: 20px; 
+      border-radius: 9999px; display: flex; 
+      align-items: center; justify-content: center;
+    }
+    .floating-button .cart-count.hidden { display: none; }
+    .hero-slideshow { 
+      position: relative; height: 50vh; min-height: 300px; 
+      overflow: hidden;
+    }
+    .hero-slide { 
+      position: absolute; top: 0; left: 0; width: 100%; 
+      height: 100%; background-size: cover; 
+      background-position: center; opacity: 0; 
+      transition: opacity 1s ease-in-out; z-index: 0;
+    }
+    .hero-slide.active { opacity: 1; z-index: 1; }
+    .spec-badge { 
+      font-size: 0.65rem; padding: 0.25rem 0.5rem; 
+      border-radius: 9999px; background-color: #dcfce7; 
+      color: #16a34a; margin: 0.15rem;
+    }
+    .dashboard-card { 
+      background-color: white; 
+      border-radius: 1rem; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+    .dashboard-card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .order-status {
+      font-size: 0.75rem; padding: 0.25rem 0.5rem; 
+      border-radius: 9999px; font-weight: 500;
+    }
+    .status-pending { background-color: #fef3c7; color: #d97706; }
+    .status-confirmed { background-color: #dcfce7; color: #16a34a; }
+    .status-shipped { background-color: #e0f2fe; color: #0284c7; }
+    .status-delivered { background-color: #ede9fe; color: #7c3aed; }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 70%;
+      border-radius: 10px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: black;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      transition: border-color 0.3s ease;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .chart-container {
+      min-height: 300px;
+    }
+    .testimonial-card {
+      background-color: #f8fafc;
+      border-left: 4px solid #16a34a;
+    }
+    .product-image {
+      width: 100%;
+      height: 12rem;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-green-700">Agri Trade Pro</h1>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-8">
+            <a href="#machinery" class="text-gray-900 hover:text-green-700 px-3 py-2 rounded-md text-sm font-medium">Machinery</a>
+            <a href="#packaging" class="text-gray-500 hover:text-green-700 px-3 py-2 rounded-md text-sm font-medium">Packaging</a>
+            <a href="#services" class="text-gray-500 hover:text-green-700 px-3 py-2 rounded-md text-sm font-medium">Services</a>
+            <a href="#testimonials" class="text-gray-500 hover:text-green-700 px-3 py-2 rounded-md text-sm font-medium">Testimonials</a>
+            <a href="#contactForm" class="text-gray-500 hover:text-green-700 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button id="cartBtn" class="relative text-gray-500 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" aria-label="Open cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cartCount" class="floating-button cart-count hidden">0</span>
+          </button>
+          <button id="adminBtn" class="hidden md:block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 text-sm">
+            Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Slideshow -->
+  <section class="relative">
+    <div class="hero-slideshow">
+      <div class="hero-slide active" style="background-image: url('https://placehold.co/1920x900/16a34a/white?text=Agri+Trade+Pro');"></div>
+      <div class="hero-slide" style="background-image: url('https://placehold.co/1920x900/22c55e/white?text=Combine+Harvester');"></div>
+      <div class="hero-slide" style="background-image: url('https://placehold.co/1920x900/84cc16/white?text=Precision+Planter');"></div>
+      <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="text-center text-white px-4">
+          <h2 class="text-4xl md:text-6xl font-bold mb-6">Premium Agricultural Solutions</h2>
+          <p class="text-xl md:text-2xl mb-8 opacity-90">Advanced Farm Machinery & Sustainable Crop Packaging Systems</p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onclick="document.getElementById('machinery').scrollIntoView({behavior: 'smooth'})" class="bg-white text-green-700 px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-100 transition duration-300">
+              Explore Machinery
+            </button>
+            <button onclick="document.getElementById('packaging').scrollIntoView({behavior: 'smooth'})" class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-white hover:text-green-700 transition duration-300 flex items-center justify-center">
+              <i class="fas fa-box mr-2"></i> 
+              <span>See Packaging Solutions</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <!-- Stat 1 -->
+        <div class="p-6">
+          <div class="text-3xl font-bold text-green-700 mb-2">200+</div>
+          <div class="text-gray-600">Machines Sold</div>
+        </div>
+        <!-- Stat 2 -->
+        <div class="p-6">
+          <div class="text-3xl font-bold text-green-700 mb-2">50K+</div>
+          <div class="text-gray-600">Tons Packaged</div>
+        </div>
+        <!-- Stat 3 -->
+        <div class="p-6">
+          <div class="text-3xl font-bold text-green-700 mb-2">15+</div>
+          <div class="text-gray-600">States Served</div>
+        </div>
+        <!-- Stat 4 -->
+        <div class="p-6">
+          <div class="text-3xl font-bold text-green-700 mb-2">10+</div>
+          <div class="text-gray-600">Years Experience</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Machinery Section -->
+  <section id="machinery" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-green-700 mb-4">Farm Machinery</h2>
+      <p class="text-gray-600 max-w-3xl mx-auto">Discover our premium range of agricultural machinery designed for efficiency, durability, and maximum productivity in modern farming operations.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <!-- Product 1 -->
+      <div class="product-card dashboard-card">
+        <div class="relative">
+          <img src="https://placehold.co/300x200/16a34a/white?text=2ZS-4+Rice+Transplanter" alt="2ZS-4 Rice Transplanter" class="w-full h-48 object-cover" />
+          <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Best Seller</div>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold text-lg mb-1">2ZS-4 Rice Transplanter</h3>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <span class="spec-badge">4-Row</span>
+            <span class="spec-badge">Gasoline 2.6kW</span>
+            <span class="spec-badge">120-210mm Spacing</span>
+          </div>
+          <ul class="text-gray-600 text-sm space-y-1 mb-3">
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Push-Type Manual Operation</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Gasoline Engine (2.6 kW @ 3000 RPM)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>4 Row Planting</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Adjustable Spacing (120–210 mm)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>15–35 mm Adjustable Depth</span>
+            </li>
+          </ul>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-lg font-bold text-green-600">₹85,000</span>
+            <button onclick="addToCart('2ZS-4 Rice Transplanter', 85000, 'https://placehold.co/300x200/16a34a/white?text=2ZS-4+Rice+Transplanter')" 
+              class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300" 
+              aria-label="Add to cart">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Product 2 -->
+      <div class="product-card dashboard-card">
+        <div class="relative">
+          <img src="https://placehold.co/300x200/22c55e/white?text=CY-6+Ride-On+Transplanter" alt="CY-6 Ride-On Transplanter" class="w-full h-48 object-cover" />
+          <div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Best Seller</div>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold text-lg mb-1">CY-6 Ride-On Transplanter</h3>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <span class="spec-badge">6-Row</span>
+            <span class="spec-badge">Diesel 5.5HP</span>
+            <span class="spec-badge">120/140mm Spacing</span>
+          </div>
+          <ul class="text-gray-600 text-sm space-y-1 mb-3">
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Ride-On Convenience</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Diesel Powered (5.5 HP engine)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>6 Rows in One Pass</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Consistent Row & Hill Spacing</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Precise Planting, One Plant per Hill</span>
+            </li>
+          </ul>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-lg font-bold text-green-600">₹1,45,000</span>
+            <button onclick="addToCart('CY-6 Ride-On Transplanter', 145000, 'https://placehold.co/300x200/22c55e/white?text=CY-6+Ride-On+Transplanter')"
+              class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+              aria-label="Add to cart">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Product 3 -->
+      <div class="product-card dashboard-card">
+        <div class="relative">
+          <img src="https://placehold.co/300x200/16a34a/white?text=4LZ-4+Combine+Harvester" alt="4LZ-4 Combine Harvester" class="w-full h-48 object-cover" />
+          <div class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">New Arrival</div>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold text-lg mb-1">4LZ-4 Combine Harvester</h3>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <span class="spec-badge">4m Width</span>
+            <span class="spec-badge">Diesel 100HP</span>
+            <span class="spec-badge">1200mm Spacing</span>
+          </div>
+          <ul class="text-gray-600 text-sm space-y-1 mb-3">
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Self-Propelled Harvester</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>High Efficiency (85-90%)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>1200mm Row Spacing</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Hydraulic Steering</span>
+            </li>
+          </ul>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-lg font-bold text-green-600">₹12,45,000</span>
+            <button onclick="addToCart('4LZ-4 Combine Harvester', 1245000, 'https://placehold.co/300x200/16a34a/white?text=4LZ-4+Combine+Harvester')"
+              class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+              aria-label="Add to cart">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Product 4 -->
+      <div class="product-card dashboard-card">
+        <div class="relative">
+          <img src="https://placehold.co/300x200/22c55e/white?text=GPS+Guidance+System" alt="GPS Guidance System" class="w-full h-48 object-cover" />
+          <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Technology</div>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold text-lg mb-1">GPS Guidance System</h3>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <span class="spec-badge">Precision</span>
+            <span class="spec-badge">RTK Accuracy</span>
+            <span class="spec-badge">Auto Steering</span>
+          </div>
+          <ul class="text-gray-600 text-sm space-y-1 mb-3">
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>RTK GPS Accuracy</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Automatic Steering System</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>±2cm Accuracy</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+              <span>Compatible with All Tractors</span>
+            </li>
+          </ul>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-lg font-bold text-green-600">₹3,85,000</span>
+            <button onclick="addToCart('GPS Guidance System', 385000, 'https://placehold.co/300x200/22c55e/white?text=GPS+Guidance+System')"
+              class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+              aria-label="Add to cart">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Packaging Solutions Section -->
+  <section id="packaging" class="bg-gray-100 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-green-700 mb-4">Crop Packaging Solutions</h2>
+        <p class="text-gray-600 max-w-3xl mx-auto">Innovative packaging systems that preserve freshness, extend shelf life, and meet international export standards.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Product 1 -->
+        <div class="product-card dashboard-card">
+          <img src="https://placehold.co/300x200/16a34a/white?text=Non-Woven+Bags" alt="Non-Woven Bags" class="w-full h-48 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-1">Non-Woven Bags</h3>
+            <p class="text-gray-600 text-sm mb-2">Eco-friendly, reusable bags made from spunbond polypropylene</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-lg font-bold text-green-600">₹12,500</span>
+              <button onclick="addToCart('Non-Woven Bags', 12500, 'https://placehold.co/300x200/16a34a/white?text=Non-Woven+Bags')"
+                class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+                aria-label="Add to cart">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Product 2 -->
+        <div class="product-card dashboard-card">
+          <img src="https://placehold.co/300x200/22c55e/white?text=EPE+Foam+Net" alt="EPE Foam Net" class="w-full h-48 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-1">EPE Foam Net</h3>
+            <p class="text-gray-600 text-sm mb-2">Cushioning mesh for delicate items</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-lg font-bold text-green-600">₹8,900</span>
+              <button onclick="addToCart('EPE Foam Net', 8900, 'https://placehold.co/300x200/22c55e/white?text=EPE+Foam+Net')"
+                class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+                aria-label="Add to cart">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="product-card dashboard-card">
+          <img src="https://placehold.co/300x200/16a34a/white?text=Corrugated+Boxes" alt="Corrugated Boxes" class="w-full h-48 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-1">Corrugated Boxes</h3>
+            <p class="text-gray-600 text-sm mb-2">Durable boxes for fresh produce packaging</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-lg font-bold text-green-600">₹18,200</span>
+              <button onclick="addToCart('Corrugated Boxes', 18200, 'https://placehold.co/300x200/16a34a/white?text=Corrugated+Boxes')"
+                class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+                aria-label="Add to cart">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Product 4 -->
+        <div class="product-card dashboard-card">
+          <img src="https://placehold.co/300x200/22c55e/white?text=Biodegradable+Netting" alt="Biodegradable Netting" class="w-full h-48 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-1">Biodegradable Netting</h3>
+            <p class="text-gray-600 text-sm mb-2">Environmentally friendly fruit packaging solution</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-lg font-bold text-green-600">₹14,900</span>
+              <button onclick="addToCart('Biodegradable Netting', 14900, 'https://placehold.co/300x200/22c55e/white?text=Biodegradable+Netting')"
+                class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition duration-300"
+                aria-label="Add to cart">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Section -->
+  <section id="dashboard" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <h2 class="text-2xl font-bold text-green-700 mb-6">Dashboard</h2>
+      
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Revenue -->
+        <div class="dashboard-card p-4">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100">
+              <i class="fas fa-rupee-sign text-green-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-gray-500 text-sm">Total Revenue</p>
+              <p class="text-xl font-bold text-gray-900" id="revenueValue">₹2.45L</p>
+              <p class="text-green-600 text-sm mt-1">+12% from last month</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="dashboard-card p-4">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100">
+              <i class="fas fa-shopping-cart text-blue-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-gray-500 text-sm">Total Orders</p>
+              <p class="text-xl font-bold text-gray-900" id="ordersValue">156</p>
+              <p class="text-green-600 text-sm mt-1">+8% from last month</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="dashboard-card p-4">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100">
+              <i class="fas fa-clock text-yellow-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-gray-500 text-sm">Pending Orders</p>
+              <p class="text-xl font-bold text-gray-900" id="pendingValue">23</p>
+              <p class="text-red-600 text-sm mt-1">-2 from yesterday</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="dashboard-card p-4">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100">
+              <i class="fas fa-users text-purple-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-gray-500 text-sm">Customers</p>
+              <p class="text-xl font-bold text-gray-900" id="customersValue">892</p>
+              <p class="text-green-600 text-sm mt-1">+15 this week</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Performance -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Sales Overview -->
+        <div class="dashboard-card p-4">
+          <h3 class="text-xl font-semibold mb-6">Sales Overview</h3>
+          <div class="chart-container flex items-center justify-center">
+            <div class="text-center text-gray-400">
+              <i class="fas fa-chart-line text-6xl mb-4"></i>
+              <p>Sales chart would appear here</p>
+            </div>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p class="text-2xl font-bold text-green-600">₹85K</p>
+              <p class="text-sm text-gray-600">This Week</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-blue-600">₹2.45L</p>
+              <p class="text-sm text-gray-600">This Month</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-purple-600">₹28.7L</p>
+              <p class="text-sm text-gray-600">This Year</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Performance -->
+        <div class="dashboard-card p-4">
+          <h3 class="text-xl font-semibold mb-6">Top Performing Products</h3>
+          <div class="space-y-4">
+            <!-- Product 1 -->
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+              <div class="flex items-center">
+                <img src="https://placehold.co/60x60/16a34a/white?text=2ZS-4" alt="2ZS-4 Rice Transplanter" class="w-10 h-10 rounded object-cover mr-3" />
+                <div>
+                  <p class="font-medium">2ZS-4 Rice Transplanter</p>
+                  <p class="text-sm text-gray-600">₹85,000</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-green-600">42 sold</p>
+                <p class="text-sm text-gray-600">Revenue: ₹3.57L</p>
+              </div>
+            </div>
+            <!-- Product 2 -->
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+              <div class="flex items-center">
+                <img src="https://placehold.co/60x60/22c55e/white?text=CY-6" alt="CY-6 Ride-On Transplanter" class="w-10 h-10 rounded object-cover mr-3" />
+                <div>
+                  <p class="font-medium">CY-6 Ride-On Transplanter</p>
+                  <p class="text-sm text-gray-600">₹1.45L</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-green-600">28 sold</p>
+                <p class="text-sm text-gray-600">Revenue: ₹4.06L</p>
+              </div>
+            </div>
+            <!-- Product 3 -->
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+              <div class="flex items-center">
+                <img src="https://placehold.co/60x60/16a34a/white?text=Non-Woven" alt="Non-Woven Bags" class="w-10 h-10 rounded object-cover mr-3" />
+                <div>
+                  <p class="font-medium">Non-Woven Bags</p>
+                  <p class="text-sm text-gray-600">₹12,500</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-green-600">68 sold</p>
+                <p class="text-sm text-gray-600">Revenue: ₹8.5L</p>
+              </div>
+            </div>
+            <!-- Product 4 -->
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+              <div class="flex items-center">
+                <img src="https://placehold.co/60x60/22c55e/white?text=EPE+Foam" alt="EPE Foam Net" class="w-10 h-10 rounded object-cover mr-3" />
+                <div>
+                  <p class="font-medium">EPE Foam Net</p>
+                  <p class="text-sm text-gray-600">₹8,900</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-green-600">75 sold</p>
+                <p class="text-sm text-gray-600">Revenue: ₹6.68L</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders and Notifications -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Recent Orders -->
+        <div class="dashboard-card p-4">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-semibold">Recent Orders</h3>
+            <a href="#" class="text-green-700 text-sm font-medium hover:underline">View All</a>
+          </div>
+          <div class="space-y-4">
+            <!-- Order 1 -->
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
+                  <i class="fas fa-shopping-cart text-green-600"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-medium">ORD-2024-001</p>
+                  <p class="text-sm text-gray-600">2 items • ₹1.72L</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="order-status status-confirmed">Confirmed</span>
+                <p class="text-sm text-gray-600 mt-1">2 hours ago</p>
+              </div>
+            </div>
+            <!-- Order 2 -->
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                  <i class="fas fa-shopping-cart text-blue-600"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-medium">ORD-2024-002</p>
+                  <p class="text-sm text-gray-600">1 item • ₹85,000</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="order-status status-pending">Pending</span>
+                <p class="text-sm text-gray-600 mt-1">4 hours ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dashboard-card p-4">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-semibold">Notifications</h3>
+            <a href="#" class="text-green-700 text-sm font-medium hover:underline">Mark All Read</a>
+          </div>
+          <div class="space-y-3">
+            <!-- Notification 1 -->
+            <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+              <div class="flex items-start">
+                <div class="p-1 bg-blue-100 rounded-full mr-3 mt-1">
+                  <i class="fas fa-info-circle text-blue-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm">New order received from <strong>FarmTech Solutions</strong></p>
+                  <p class="text-xs text-gray-600 mt-1">30 minutes ago</p>
+                </div>
+              </div>
+            </div>
+            <!-- Notification 2 -->
+            <div class="p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+              <div class="flex items-start">
+                <div class="p-1 bg-yellow-100 rounded-full mr-3 mt-1">
+                  <i class="fas fa-exclamation-triangle text-yellow-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm">Inventory low for <strong>Non-Woven Bags</strong></p>
+                  <p class="text-xs text-gray-600 mt-1">2 hours ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Status -->
+      <div class="dashboard-card p-4">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold">Inventory Status</h3>
+          <button class="text-sm px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+            Update Inventory
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b">
+                <th class="text-left py-3 px-4 font-semibold">Product</th>
+                <th class="text-left py-3 px-4 font-semibold">Category</th>
+                <th class="text-left py-3 px-4 font-semibold">Stock</th>
+                <th class="text-left py-3 px-4 font-semibold">Status</th>
+                <th class="text-left py-3 px-4 font-semibold">Last Updated</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <tr class="hover:bg-gray-50 transition duration-150">
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <img src="https://placehold.co/40x40/16a34a/white?text=2ZS-4" alt="2ZS-4 Rice Transplanter" class="w-10 h-10 rounded object-cover mr-3" />
+                    <span>2ZS-4 Rice Transplanter</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">Farm Machinery</td>
+                <td class="py-3 px-4">15</td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    <span class="text-green-600">In Stock</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-gray-600">Today, 10:30 AM</td>
+              </tr>
+              <tr class="hover:bg-gray-50 transition duration-150">
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <img src="https://placehold.co/40x40/22c55e/white?text=CY-6" alt="CY-6 Ride-On Transplanter" class="w-10 h-10 rounded object-cover mr-3" />
+                    <span>CY-6 Ride-On Transplanter</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">Farm Machinery</td>
+                <td class="py-3 px-4">8</td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                    <span class="text-yellow-600">Low Stock</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-gray-600">Yesterday, 3:45 PM</td>
+              </tr>
+              <tr class="hover:bg-gray-50 transition duration-150">
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <img src="https://placehold.co/40x40/16a34a/white?text=Non-Woven" alt="Non-Woven Bags" class="w-10 h-10 rounded object-cover mr-3" />
+                    <span>Non-Woven Bags</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">Packaging</td>
+                <td class="py-3 px-4">5</td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                    <span class="text-red-600">Critical</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-gray-600">Today, 9:15 AM</td>
+              </tr>
+              <tr class="hover:bg-gray-50 transition duration-150">
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <img src="https://placehold.co/40x40/22c55e/white?text=EPE+Foam" alt="EPE Foam Net" class="w-10 h-10 rounded object-cover mr-3" />
+                    <span>EPE Foam Net</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">Packaging</td>
+                <td class="py-3 px-4">22</td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    <span class="text-green-600">In Stock</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-gray-600">Yesterday, 11:20 AM</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-green-700 mb-4">What Our Clients Say</h2>
+      <p class="text-gray-600 max-w-3xl mx-auto">Hear from farmers and businesses that have transformed their operations with our solutions</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card bg-white rounded-lg shadow-lg p-6">
+        <div class="flex items-center mb-4">
+          <img src="https://placehold.co/60x60/16a34a/white?text=Farmer" alt="Customer Photo" class="w-12 h-12 rounded-full mr-4" />
+          <div>
+            <h4 class="font-semibold">Rajesh Kumar</h4>
+            <p class="text-sm text-gray-600">Organic Farmer, Maharashtra</p>
+          </div>
+        </div>
+        <p class="text-gray-600 mt-2">"The 2ZS-4 rice transplanter revolutionized our planting process. We've increased efficiency by 40% and reduced labor costs significantly."</p>
+        <div class="flex mt-4">
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+        </div>
+      </div>
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card bg-white rounded-lg shadow-lg p-6">
+        <div class="flex items-center mb-4">
+          <img src="https://placehold.co/60x60/22c55e/white?text=Business+Owner" alt="Customer Photo" class="w-12 h-12 rounded-full mr-4" />
+          <div>
+            <h4 class="font-semibold">Anita Deshmukh</h4>
+            <p class="text-sm text-gray-600">Agri Business Owner</p>
+          </div>
+        </div>
+        <p class="text-gray-600 mt-2">"The non-woven bags have improved our produce shelf life by 30%. The custom sizing options are perfect for our different crop types."</p>
+        <div class="flex mt-4">
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+          <i class="fas fa-star text-yellow-500"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cart Sidebar -->
+  <div id="cartSidebar" class="fixed inset-y-0 right-0 w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50" aria-live="polite" role="dialog" aria-labelledby="cartTitle">
+    <div class="h-full flex flex-col">
+      <div class="p-4 border-b flex justify-between items-center">
+        <h3 id="cartTitle" class="text-lg font-semibold">Shopping Cart (0)</h3>
+        <button onclick="closeCart()" class="text-gray-500 hover:text-gray-700" aria-label="Close cart">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="cartItems" class="flex-grow overflow-y-auto p-4">
+        <div class="text-center text-gray-500 py-8">
+          <i class="fas fa-shopping-cart text-4xl mb-2"></i>
+          <p>Your cart is empty</p>
+        </div>
+      </div>
+      <div class="p-4 border-t">
+        <div class="flex justify-between mb-4">
+          <span class="font-semibold">Total:</span>
+          <span id="cartTotal" class="font-bold">₹0.00</span>
+        </div>
+        <button id="checkoutBtn" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Request Quote
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Cart Button -->
+  <button id="floatingCartBtn" class="floating-button bg-green-600 text-white" onclick="toggleCart()" aria-label="Open cart">
+    <i class="fas fa-shopping-cart text-xl" aria-hidden="true"></i>
+    <span id="floatingCartCount" class="floating-button cart-count hidden">0</span>
+  </button>
+
+  <!-- Contact Form -->
+  <section id="contactForm" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-green-700 mb-6 text-center">Request Information or Quote</h2>
+      <form id="quoteForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+            <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+            <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+              <option>Select State</option>
+              <option>Maharashtra</option>
+              <option>Uttar Pradesh</option>
+              <option>West Bengal</option>
+              <option>Gujarat</option>
+              <option>Punjab</option>
+              <option>Haryana</option>
+              <option>Karnataka</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Interested In *</label>
+          <div class="flex flex-wrap gap-3">
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="rounded text-green-600 focus:ring-green-500 mr-2" />
+              <span class="text-sm">Farm Machinery</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="rounded text-green-600 focus:ring-green-500 mr-2" />
+              <span class="text-sm">Packaging Solutions</span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+          <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+        </div>
+        <div>
+          <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300">
+            Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-green-700 mb-4">Our Services</h2>
+      <p class="text-gray-600 max-w-3xl mx-auto">Comprehensive support for all your agricultural needs</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Service 1 -->
+      <div class="bg-white rounded-lg overflow-hidden shadow-md">
+        <div class="p-6">
+          <i class="fas fa-wrench text-green-600 text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Installation</h3>
+          <p class="text-gray-600">Professional installation of all agricultural equipment by certified technicians</p>
+        </div>
+      </div>
+      <!-- Service 2 -->
+      <div class="bg-white rounded-lg overflow-hidden shadow-md">
+        <div class="p-6">
+          <i class="fas fa-tools text-green-600 text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Maintenance</h3>
+          <p class="text-gray-600">Regular maintenance packages to keep your equipment in top condition</p>
+        </div>
+      </div>
+      <!-- Service 3 -->
+      <div class="bg-white rounded-lg overflow-hidden shadow-md">
+        <div class="p-6">
+          <i class="fas fa-chalkboard-teacher text-green-600 text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Operator Training</h3>
+          <p class="text-gray-600">Comprehensive training programs for efficient equipment operation</p>
+        </div>
+      </div>
+      <!-- Service 4 -->
+      <div class="bg-white rounded-lg overflow-hidden shadow-md">
+        <div class="p-6">
+          <i class="fas fa-handshake text-green-600 text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Consultation</h3>
+          <p class="text-gray-600">Expert advice on selecting the right equipment for your needs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="bg-green-600 text-white py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold mb-6">Ready to Transform Your Agricultural Operation?</h2>
+      <p class="text-lg mb-8 opacity-90">Contact our experts today for a personalized consultation and equipment quote.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button onclick="document.getElementById('contactForm').scrollIntoView({behavior: 'smooth'})" class="bg-white text-green-700 px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-100 transition duration-300">
+          Request Consultation
+        </button>
+        <a href="tel:+917415286971" class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-white hover:text-green-700 transition duration-300 flex items-center justify-center">
+          <i class="fas fa-phone mr-2"></i> Call Us: +91 74152 86971
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Dashboard Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('adminModal')">&times;</span>
+      <h2 class="text-2xl font-bold mb-6">Admin Dashboard</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Update Hero Section</label>
+          <input type="text" placeholder="Hero Title" class="w-full px-4 py-2 border rounded mb-4" />
+          <input type="text" placeholder="Hero Subtitle" class="w-full px-4 py-2 border rounded mb-4" />
+          <button class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-300">
+            Save Hero Changes
+          </button>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Update Stats</label>
+          <input type="text" placeholder="Total Revenue" class="w-full px-4 py-2 border rounded mb-4" />
+          <input type="text" placeholder="Total Orders" class="w-full px-4 py-2 border rounded mb-4" />
+          <button class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-300">
+            Save Stats
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4">Agri Trade Pro</h3>
+          <p class="text-gray-400 mb-4">Your trusted partner in agricultural innovation and efficiency.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition duration-300" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition duration-300" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition duration-300" aria-label="WhatsApp">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Products</h4>
+          <ul class="text-gray-400 space-y-2">
+            <li><a href="#machinery" class="hover:text-white transition duration-300">Farm Machinery</a></li>
+            <li><a href="#packaging" class="hover:text-white transition duration-300">Packaging Solutions</a></li>
+            <li><a href="#services" class="hover:text-white transition duration-300">Services</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Services</h4>
+          <ul class="text-gray-400 space-y-2">
+            <li>Installation</li>
+            <li>Maintenance</li>
+            <li>Training</li>
+            <li>Consultation</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Contact Us</h4>
+          <ul class="text-gray-400 space-y-2">
+            <li class="flex items-start">
+              <i class="fas fa-map-marker-alt mt-1 mr-2"></i>
+              <span>123 AgriTech Park, Faridabad, Haryana</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-phone mr-2"></i>
+              <span>+91 74152 86971</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-envelope mr-2"></i>
+              <span>info@agritradepro.in</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-clock mr-2"></i>
+              <span>Mon-Fri: 8AM-6PM</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+        <p>&copy; 2024 Agri Trade Pro. All rights reserved.</p>
+        <p class="mt-2">Advanced agricultural machinery and sustainable packaging solutions for Indian farmers.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Toast -->
+  <div id="notification" class="fixed top-20 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 hidden">
+    <i class="fas fa-shopping-cart text-2xl mr-2"></i>
+    <span id="notificationText"></span>
+  </div>
+
+  <script>
+    // Cart functionality
+    let cart = [];
+    
+    function updateCart() {
+      const cartCount = document.getElementById('cartCount');
+      const floatingCartCount = document.getElementById('floatingCartCount');
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const cartTitle = document.querySelector('#cartSidebar h3');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      const count = cart.length;
+      
+      cartCount.textContent = count;
+      floatingCartCount.textContent = count;
+      cartCount.classList.toggle('hidden', count === 0);
+      floatingCartCount.classList.toggle('hidden', count === 0);
+      cartTitle.textContent = Shopping Cart (${count});
+      
+      if (count === 0) {
+        cartItems.innerHTML = `
+          <div class="text-center text-gray-500 py-8">
+            <i class="fas fa-shopping-cart text-4xl mb-2"></i>
+            <p>Your cart is empty</p>
+          </div>
+        `;
+        cartTotal.textContent = '₹0.00';
+        checkoutBtn.disabled = true;
+      } else {
+        let html = '';
+        let total = 0;
+        cart.forEach((item, index) => {
+          total += item.price;
+          html += `
+            <div class="cart-item bg-gray-50 rounded-lg p-3 mb-3 flex items-center">
+              <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded mr-3" />
+              <div class="flex-grow">
+                <h4 class="font-semibold text-sm">${item.name}</h4>
+                <p class="text-green-600 font-bold">₹${item.price.toLocaleString()}</p>
+              </div>
+              <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          `;
+        });
+        cartItems.innerHTML = html;
+        cartTotal.textContent = ₹${total.toLocaleString(undefined, {minimumFractionDigits: 2})};
+        checkoutBtn.disabled = false;
+      }
+    }
+
+    function addToCart(name, price, image) {
+      cart.push({ name, price, image });
+      updateCart();
+      showNotification(${name} added to cart!);
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function toggleCart() {
+      const cartSidebar = document.getElementById('cartSidebar');
+      cartSidebar.classList.toggle('translate-x-full');
+    }
+
+    function closeCart() {
+      document.getElementById('cartSidebar').classList.add('translate-x-full');
+    }
+
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      const notificationText = document.getElementById('notificationText');
+      notificationText.textContent = message;
+      notification.classList.remove('hidden');
+      notification.style.opacity = '1';
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          notification.classList.add('hidden');
+        }, 500);
+      }, 3000);
+    }
+
+    // Hero Slideshow
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.hero-slide');
+    function nextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+    setInterval(nextSlide, 5000);
+
+    // Form submission
+    document.getElementById('quoteForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Thank you for your request! Our team will contact you shortly.');
+      this.reset();
+    });
+
+    // Modal functionality
+    document.getElementById('adminBtn').addEventListener('click', () => {
+      document.getElementById('adminModal').style.display = 'block';
+    });
+
+    document.querySelector('.modal .close').addEventListener('click', () => {
+      document.getElementById('adminModal').style.display = 'none';
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      slides[0].classList.add('active');
+      updateCart();
+    });
+
+    // Add keyboard support for cart
+    document.getElementById('cartBtn').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        toggleCart();
+      }
+    });
+  </script>
+</body>
+</html>
