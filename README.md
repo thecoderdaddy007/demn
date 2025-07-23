@@ -1,1 +1,1 @@
-# demn
+code from ex1
